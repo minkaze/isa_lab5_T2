@@ -1,4 +1,5 @@
-const API_BASE_URL = "https://your-server2-domain.example";
+const API_BASE_URL = "https://d17weg2w58w5x2.cloudfront.net";
+
 
 class PatientAPI {
     constructor() {
