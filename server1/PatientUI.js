@@ -15,6 +15,7 @@ class PatientUI {
     }
 
     initialize() {
+        document.title = MESSAGES.PAGE_TITLE;
         this.pageTitle.textContent = MESSAGES.PAGE_TITLE;
         this.insertButton.textContent = MESSAGES.INSERT_BUTTON;
         this.queryLabel.textContent = MESSAGES.QUERY_LABEL;
