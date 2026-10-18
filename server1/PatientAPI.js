@@ -12,7 +12,7 @@ class PatientAPI {
         const result = await response.text();
 
         if (!response.ok) {
-            throw new Error(`${MESSAGES.HTTP_ERROR} ${response.status} ${result}`);
+            throw new Error(this.formatError(response.status, result));
         }
 
         return result || MESSAGES.INSERT_SUCCESS;
@@ -30,11 +30,25 @@ class PatientAPI {
         const result = await response.text();
 
         if (!response.ok) {
-            throw new Error(
-                `${MESSAGES.HTTP_ERROR} ${response.status} ${result}`
-            );
+            throw new Error(this.formatError(response.status, result));
         }
 
         return result;
+    }
+
+    formatError(status, body) {
+        let detail = body;
+
+        try {
+            const parsed = JSON.parse(body);
+
+            if (parsed && parsed.message) {
+                detail = parsed.message;
+            }
+        } catch (error) {
+            detail = body;
+        }
+
+        return `${MESSAGES.HTTP_ERROR} ${status} ${detail}`;
     }
 }
