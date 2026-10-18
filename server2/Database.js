@@ -16,10 +16,7 @@ class Database {
             waitForConnections: true,
             connectionLimit: 5,
             dateStrings: true,
-            multipleStatements: false,
-            ssl: dbConfig.ssl
-                ? { minVersion: "TLSv1.2", rejectUnauthorized: dbConfig.sslStrict }
-                : undefined
+            multipleStatements: false
         });
     }
 
@@ -57,10 +54,6 @@ class Database {
     async runSelect(sql) {
         const [rows] = await this.readPool.query(sql);
         return rows;
-    }
-
-    async close() {
-        await Promise.all([this.readPool.end(), this.writePool.end()]);
     }
 }
 

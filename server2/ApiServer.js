@@ -1,5 +1,4 @@
 const http = require("http");
-const { URL } = require("url");
 const messages = require("./lang/en/messages");
 
 class ApiServer {
@@ -45,7 +44,7 @@ class ApiServer {
 
             if (req.method === "GET" && markerIndex !== -1) {
                 const rest = url.pathname.slice(markerIndex + this.config.apiMarker.length);
-                await this.handleGet(res, rest, url);
+                await this.handleGet(res, rest);
             } else if (req.method === "POST") {
                 await this.handlePost(req, res);
             } else if (req.method === "GET") {
@@ -58,21 +57,19 @@ class ApiServer {
         }
     }
 
-    async handleGet(res, rest, url) {
-        let query = url.searchParams.get("query");
-        if (!query && rest.length > 1) {
-            query = decodeURIComponent(rest.slice(1));
+    async handleGet(res, rest) {
+        let query;
+        try {
+            query = decodeURIComponent(rest.slice(1)).trim();
+        } catch (e) {
+            this.sendJson(res, 400, { success: false, message: messages.badUrlEncoding });
+            return;
         }
-        query = (query || "").trim();
         if (query.length >= 2 && query.startsWith("\"") && query.endsWith("\"")) {
             query = query.slice(1, -1).trim();
         }
         if (!query) {
             this.sendJson(res, 400, { success: false, message: messages.emptyQuery });
-            return;
-        }
-        if (!/^select\b/i.test(query)) {
-            this.sendJson(res, 403, { success: false, message: messages.onlySelectAllowed });
             return;
         }
         const rows = await this.database.runSelect(query);
