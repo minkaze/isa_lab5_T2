@@ -1,3 +1,4 @@
+// Claude was used
 const mysql = require("mysql2/promise");
 
 class Database {
